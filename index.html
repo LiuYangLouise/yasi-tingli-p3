@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Reborner · 雅思听力核心词汇 · Part 3 全量版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(165deg, #f0f7e9 0%, #deecd2 100%);
+            padding: 1.5rem 1rem 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            max-width: 620px;
+            width: 100%;
+        }
+        .header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 2.1rem;
+            font-weight: 380;
+            color: #2d543b;
+            line-height: 1.3;
+            letter-spacing: -0.2px;
+            margin-bottom: 0.2rem;
+        }
+        .header .sub1 {
+            font-size: 1.5rem;
+            color: #4f7b5a;
+            font-weight: 340;
+            line-height: 1.4;
+        }
+        .header .sub2 {
+            font-size: 1.2rem;
+            color: #618967;
+            font-weight: 300;
+            line-height: 1.4;
+        }
+        .chapter-scroll {
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            padding: 0.2rem 0 0.8rem 0;
+            scrollbar-width: none;
+        }
+        .chapter-scroll::-webkit-scrollbar { display: none; }
+        .chap-flex {
+            display: inline-flex;
+            gap: 0.7rem;
+            padding: 0 0.2rem;
+        }
+        .chap-btn {
+            background: #f3fcee;
+            border: 1px solid #d2e2c7;
+            border-radius: 40px;
+            padding: 0.6rem 1.8rem;
+            font-size: 1.2rem;
+            font-weight: 430;
+            color: #2b5538;
+            white-space: nowrap;
+            box-shadow: 0 2px 6px rgba(150, 180, 140, 0.08);
+            transition: 0.1s;
+            cursor: pointer;
+        }
+        .chap-btn.active {
+            background: #cde5c2;
+            border-color: #8bb282;
+            color: #1b4125;
+            font-weight: 500;
+        }
+        .subchapter-scroll {
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            padding: 0 0 0.9rem 0;
+            scrollbar-width: none;
+        }
+        .subchapter-scroll::-webkit-scrollbar { display: none; }
+        .sub-flex {
+            display: inline-flex;
+            gap: 0.6rem;
+            padding: 0 0.2rem;
+        }
+        .sub-btn {
+            background: #ecf7e4;
+            border: 1px solid #cde0c0;
+            border-radius: 30px;
+            padding: 0.4rem 1.3rem;
+            font-size: 0.96rem;
+            font-weight: 400;
+            color: #336941;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(120,150,100,0.1);
+            cursor: pointer;
+        }
+        .sub-btn.active-sub {
+            background: #d4ebc5;
+            border-color: #9abb90;
+            color: #1e4529;
+            font-weight: 460;
+        }
+        .word-count-badge {
+            font-size: 0.75rem;
+            background: #c3ddb6;
+            border-radius: 20px;
+            padding: 0.15rem 0.6rem;
+            margin-left: 0.5rem;
+            color: #23522e;
+        }
+        .flip-container {
+            perspective: 1000px;
+            width: 100%;
+            margin: 1.2rem 0 1.5rem 0;
+        }
+        .flipper {
+            position: relative;
+            width: 100%;
+            height: auto;
+            transition: transform 0.4s ease;
+            transform-style: preserve-3d;
+        }
+        .flipper.flipped {
+            transform: rotateY(180deg);
+        }
+        .front, .back {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            position: relative;
+            top: 0;
+            left: 0;
+            width: 100%;
+            border-radius: 42px;
+            padding: 2.8rem 1.2rem;
+            background: #fcfff8;
+            border: 1px solid #e3f0da;
+            box-shadow: 0 10px 20px rgba(130, 160, 120, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 240px;
+        }
+        .back {
+            position: absolute;
+            transform: rotateY(180deg);
+            min-height: 240px;
+        }
+        .en-word {
+            font-size: 2.8rem;
+            font-weight: 370;
+            color: #1c4a2a;
+            line-height: 1.3;
+            word-break: break-word;
+            text-align: center;
+            width: 100%;
+        }
+        .ch-word {
+            font-size: 2rem;
+            font-weight: 340;
+            color: #316a42;
+            margin-top: 0.5rem;
+            text-align: center;
+            width: 100%;
+        }
+        .pos {
+            font-size: 1.2rem;
+            color: #719b79;
+            font-weight: 380;
+            text-align: center;
+            width: 100%;
+        }
+        .nav-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1.5rem 0 2rem 0;
+            flex-wrap: wrap;
+        }
+        .nav-btn {
+            background: #f1fde9;
+            border: 1px solid #cde0c3;
+            border-radius: 60px;
+            padding: 0.7rem 1.8rem;
+            font-size: 1.2rem;
+            color: #295e36;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            cursor: pointer;
+        }
+        .quiz-btn {
+            background: #e2f1d8;
+            border-color: #aacaa0;
+            font-weight: 440;
+        }
+        .thumb-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1rem 0 0.8rem;
+        }
+        .thumb-header span {
+            font-size: 1.2rem;
+            color: #3d6d4b;
+            font-weight: 330;
+        }
+        .export-btn {
+            background: #dbeace;
+            border: 1px solid #adc9a2;
+            border-radius: 40px;
+            padding: 0.4rem 1.3rem;
+            font-size: 1rem;
+            color: #23562f;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .thumb-grid-container {
+            max-height: 300px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 20px;
+            padding: 0.2rem 0.2rem 0.5rem 0.2rem;
+            scrollbar-width: thin;
+            scrollbar-color: #b5d3ae #e8f3e0;
+        }
+        .thumb-grid-container::-webkit-scrollbar { width: 5px; }
+        .thumb-grid-container::-webkit-scrollbar-track { background: #e8f3e0; border-radius: 10px; }
+        .thumb-grid-container::-webkit-scrollbar-thumb { background: #b5d3ae; border-radius: 10px; }
+        .thumb-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.6rem;
+            padding: 0.2rem;
+        }
+        .thumb-item {
+            background: #f9fff3;
+            border: 1px solid #dbefd0;
+            border-radius: 24px;
+            padding: 0.7rem 0.3rem 0.7rem 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+            box-shadow: 0 2px 6px rgba(160, 180, 140, 0.1);
+            min-width: 0;
+        }
+        .thumb-item input[type="checkbox"] {
+            width: 1.2rem;
+            height: 1.2rem;
+            accent-color: #86b07c;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+        .thumb-item label {
+            font-size: 0.9rem;
+            color: #2e623d;
+            font-weight: 420;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+            cursor: pointer;
+        }
+        .quiz-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(200, 225, 190, 0.8);
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.2s;
+            padding: 1rem;
+        }
+        .quiz-overlay.show {
+            visibility: visible;
+            opacity: 1;
+        }
+        .quiz-panel {
+            background: #f6ffee;
+            width: 100%;
+            max-width: 450px;
+            border-radius: 48px;
+            padding: 2.2rem 1.5rem;
+            border: 1px solid #daefce;
+            box-shadow: 0 20px 30px rgba(90, 120, 70, 0.2);
+        }
+        .quiz-panel h3 {
+            font-size: 2rem;
+            font-weight: 320;
+            color: #2f6040;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+        .close-area { display: flex; justify-content: flex-end; }
+        .close-quiz {
+            font-size: 2.8rem; line-height: 0.8; color: #6d9b71;
+            background: none; border: none; padding: 0 0.5rem; cursor: pointer;
+        }
+        .quiz-card {
+            background: white;
+            border-radius: 42px;
+            padding: 2.5rem 1rem;
+            margin: 1.5rem 0;
+            border: 1px solid #d1e6c5;
+            text-align: center;
+        }
+        .quiz-card .big-en {
+            font-size: 3rem;
+            color: #1e4d2b;
+            font-weight: 340;
+            word-break: break-word;
+        }
+        .quiz-footer { display: flex; justify-content: center; gap: 2rem; margin: 1rem 0; }
+        .quiz-footer .nav-btn { font-size: 1.4rem; padding: 0.5rem 2rem; }
+        .quiz-counter { text-align: center; color: #517d58; font-size: 1.1rem; }
+        .tip { color: #799e7a; font-size: 0.95rem; margin-top: 1rem; text-align: center; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Reborner 雅思听力核心词汇</h1>
+        <div class="sub1">Part 3 专项 · 全量版</div>
+        <div class="sub2">天天进步，每日新生</div>
+    </div>
+
+    <!-- 主分类：Part 3 (只有一个) -->
+    <div class="chapter-scroll" id="mainCategoryScroll"><div class="chap-flex" id="mainCategoryFlex"></div></div>
+    <!-- 二级分类：讲座科研论文 / 图书馆 / 学习与考试 / 学校 -->
+    <div class="subchapter-scroll" id="subCategoryScroll"><div class="sub-flex" id="subCategoryFlex"></div></div>
+
+    <!-- 主卡片 -->
+    <div class="flip-container" id="flipContainer">
+        <div class="flipper" id="flipper">
+            <div class="front" id="cardFront"><div class="en-word" id="mainEn">lecture</div></div>
+            <div class="back" id="cardBack">
+                <div class="en-word" id="backEn">lecture</div>
+                <div class="pos" id="posInfo">n.</div>
+                <div class="ch-word" id="mainCh">讲座</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-row">
+        <button class="nav-btn" id="prevBtn">← 前</button>
+        <button class="nav-btn" id="nextBtn">后 →</button>
+        <button class="nav-btn" id="speakBtn">🔊 发音</button>
+        <button class="nav-btn quiz-btn" id="quizOpenBtn">🎯 quiz</button>
+    </div>
+
+    <div class="thumb-header">
+        <span>📌 本章全部单词 · 勾选难词</span>
+        <button class="export-btn" id="exportDifficultBtn">📎 导出我的难词</button>
+    </div>
+    <div class="thumb-grid-container"><div class="thumb-grid" id="thumbGrid"></div></div>
+    <div class="tip">✓ 点击卡片翻转 · 勾选方格标记难词</div>
+</div>
+
+<!-- quiz 弹窗 -->
+<div class="quiz-overlay" id="quizOverlay">
+    <div class="quiz-panel">
+        <div class="close-area"><button class="close-quiz" id="closeQuizBtn">⨯</button></div>
+        <h3>🔍 随机小测</h3>
+        <div class="quiz-card"><div class="big-en" id="quizWord">lecture</div></div>
+        <div class="quiz-footer">
+            <button class="nav-btn" id="quizPrevBtn">←</button>
+            <button class="nav-btn" id="quizNextBtn">→</button>
+        </div>
+        <div class="quiz-counter" id="quizCounter">1 / 5</div>
+    </div>
+</div>
+
+<script>
+(function() {
+    // ==================== 雅思听力核心词汇 · Part 3 完整版 (Section 3 校园) ====================
+    // 严格按照文档 SECTION 3 全部词汇录入：讲座、科研项目、论文 / 图书馆 / 学习与考试 / 学校
+    const vocabData = [
+        // 1. 讲座、科研项目、论文
+        { en: "lecture", ch: "讲座", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "lecturer", ch: "演讲者", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "short", ch: "短的", pos: "adj.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "short lecture", ch: "简短演讲", pos: "phr.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "speaker", ch: "演讲者；话筒", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "present", ch: "呈现；展示", pos: "v.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "presentation", ch: "演讲", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "slide", ch: "幻灯片", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "slide presentation", ch: "幻灯片展示", pos: "phr.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "presentation skill", ch: "演讲技巧", pos: "phr.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "presenting result", ch: "展示结论", pos: "phr.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "seminar", ch: "讲座", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "seminar group", ch: "讨论组", pos: "phr.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "seminar room", ch: "研讨室", pos: "phr.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "representation", ch: "表现", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "performance", ch: "表现", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "effect", ch: "效果", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "effectiveness", ch: "有效性", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "efficiency", ch: "效果", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "efficient", ch: "有效率的", pos: "adj.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "project", ch: "项目，计划", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "project background", ch: "课题背景", pos: "phr.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "project outline", ch: "设计方案，项目大纲", pos: "phr.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "report", ch: "报告", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "report finding", ch: "报告", pos: "phr.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "experiment", ch: "实验", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "microscope", ch: "显微镜", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "microradiogram", ch: "X光片", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "sample", ch: "样品；例子", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "mould", ch: "模具", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "model", ch: "模型", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "solid", ch: "固体", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "liquid", ch: "液体", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "fluid", ch: "液体", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "research", ch: "研究", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "research approach", ch: "研究方法", pos: "phr.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "research finding", ch: "研究成果", pos: "phr.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "researcher", ch: "研究员", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "field", ch: "领地；领域", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "fieldwork", ch: "实地调查", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "essay writing", ch: "写论文", pos: "phr.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "wrong", ch: "错误的", pos: "adj.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "incorrect", ch: "错误的", pos: "adj.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "error message", ch: "错误信息", pos: "phr.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "mistake", ch: "错误", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "correction", ch: "修改", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "version", ch: "版本", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "format", ch: "格式", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "heading", ch: "标题", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "title", ch: "标题", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "topic", ch: "话题", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "subtopic", ch: "副标题", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "theory chapter", ch: "理论章节", pos: "phr.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "theoretical", ch: "理论上的", pos: "adj.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "font", ch: "字型，字体", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "paragraphs", ch: "段落", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "section", ch: "部分", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "stages", ch: "阶段；步骤", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "order", ch: "顺序", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "analysis", ch: "分析；分解", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "attitude", ch: "态度", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "opinion", ch: "观点", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "statement position", ch: "立场声明", pos: "phr.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "mission statement", ch: "宣言", pos: "phr.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "explain", ch: "解释", pos: "v.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "explanation", ch: "解释", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "argument", ch: "论据；争论", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "fact", ch: "现实；证据", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "priority", ch: "优先", pos: "n.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+        { en: "second", ch: "第二的；次要的", pos: "adj.", mainCategory: "Part 3", subCategory: "讲座科研论文" },
+
+        // 2. 图书馆
+        { en: "summarize", ch: "总结", pos: "v.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "summary", ch: "概括的；概要的", pos: "adj.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "summary report", ch: "总结报告", pos: "phr.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "conclusion", ch: "结论", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "outcome", ch: "结果", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "library", ch: "图书馆", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "reading", ch: "阅读", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "read aloud", ch: "阅读", pos: "phr.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "read difficulty", ch: "阅读障碍", pos: "phr.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "book", ch: "书本", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "bookshelf", ch: "书架", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "bookshop", ch: "书店", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "booklet", ch: "小册子", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "free booklet", ch: "赠阅册子", pos: "phr.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "manual", ch: "手册", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "references", ch: "参考", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "reference number", ch: "参考编号", pos: "phr.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "index", ch: "索引", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "categories", ch: "类别", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "classifying", ch: "归类", pos: "v.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "classification", ch: "分类", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "attachment", ch: "附件", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "article", ch: "文章", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "document", ch: "文档", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "documentation", ch: "文件", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "documentary", ch: "文件", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "file", ch: "文件", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "archive", ch: "存档；档案；档案室", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "handouts", ch: "讲义", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "handbook", ch: "手册", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "copy", ch: "复制", pos: "v.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "photocopy shop", ch: "复印店", pos: "phr.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "photocopies", ch: "复印", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "printer", ch: "打印机", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "printing", ch: "打印", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "printing press", ch: "印刷厂", pos: "phr.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "printing technology", ch: "印刷工艺", pos: "phr.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "type", ch: "打字", pos: "v.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "typing", ch: "打字", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "paper", ch: "纸", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "paper jam", ch: "卡纸", pos: "phr.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "pen", ch: "笔", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "pencil", ch: "铅笔", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "ink", ch: "墨水", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "chalk", ch: "粉笔", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "textbook", ch: "教材", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "textbooks allowance", ch: "教材补助", pos: "phr.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "textbook lesson", ch: "教材课", pos: "phr.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "text structure", ch: "文章结构", pos: "phr.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "knowledge sharing", ch: "知识共享", pos: "phr.", mainCategory: "Part 3", subCategory: "图书馆" },
+        { en: "knowledge", ch: "知识", pos: "n.", mainCategory: "Part 3", subCategory: "图书馆" },
+
+        // 3. 学习与考试
+        { en: "learn", ch: "学习", pos: "v.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "learner", ch: "学习者", pos: "n.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "learning", ch: "学习", pos: "n.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "learning difficulty", ch: "学习障碍", pos: "phr.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "learning style", ch: "学习风格", pos: "phr.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "learning zone", ch: "学习专区", pos: "phr.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "distance learning", ch: "远程教育", pos: "phr.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "professional", ch: "专业的", pos: "adj.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "professional learning", ch: "专业学习", pos: "phr.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "study", ch: "学习", pos: "n.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "study skill", ch: "学习技巧", pos: "phr.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "comprehension", ch: "理解", pos: "n.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "aware", ch: "意识到的", pos: "adj.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "acknowledgment", ch: "公认；承认", pos: "n.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "understand", ch: "理解", pos: "v.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "share", ch: "分享", pos: "v.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "sharing", ch: "分享", pos: "n.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "idea", ch: "想法", pos: "n.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "share ideas", ch: "分享观点", pos: "phr.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "approach", ch: "接近", pos: "v.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "method", ch: "方法", pos: "n.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "methodology", ch: "方法论", pos: "n.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "plan", ch: "规划", pos: "v.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "planning", ch: "计划制订", pos: "n.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "plan time", ch: "规划时间", pos: "phr.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "case studies", ch: "案例研究", pos: "phr.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "example", ch: "例子", pos: "n.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "general discussion", ch: "综合讨论", pos: "phr.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "general", ch: "普遍的；一般的", pos: "adj.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "homework", ch: "家庭作业", pos: "n.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "note", ch: "笔记", pos: "n.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "notetaking", ch: "笔记", pos: "n.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "make notes", ch: "做笔记", pos: "phr.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "notebook", ch: "笔记本", pos: "n.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "note system", ch: "笔记系统", pos: "phr.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "outline", ch: "概述", pos: "n.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "guideline", ch: "指导方针", pos: "n.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "object", ch: "目标", pos: "n.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "objective", ch: "目标", pos: "n.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "objective matter", ch: "目标物", pos: "phr.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "purpose", ch: "目的", pos: "n.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "prepared", ch: "准备好的", pos: "adj.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "preparation", ch: "准备", pos: "n.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "exam", ch: "考试", pos: "n.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "exam preparation", ch: "备考", pos: "phr.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "quizzes", ch: "测验", pos: "n.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "test", ch: "测试", pos: "n.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "result", ch: "结果", pos: "n.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "test result", ch: "测试结果", pos: "phr.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "academic record", ch: "学习成绩", pos: "phr.", mainCategory: "Part 3", subCategory: "学习与考试" },
+        { en: "achievement", ch: "完成，达到；成就，成绩", pos: "n.", mainCategory: "Part 3", subCategory: "学习与考试" },
+
+        // 4. 学校
+        { en: "local school", ch: "本地学校", pos: "phr.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "primary school", ch: "小学", pos: "phr.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "primary", ch: "主要的；最初的", pos: "adj.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "secondary school", ch: "中学", pos: "phr.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "secondary", ch: "中等的", pos: "adj.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "summer school", ch: "暑期学校", pos: "phr.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "nursery", ch: "幼儿园", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "education", ch: "教育", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "education officer", ch: "教育官员", pos: "phr.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "education plan", ch: "教育规划", pos: "phr.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "educational", ch: "教育的", pos: "adj.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "student", ch: "学生", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "student card", ch: "学生卡", pos: "phr.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "student loan", ch: "学生贷款", pos: "phr.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "student union", ch: "学生会", pos: "phr.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "student service", ch: "学生服务", pos: "phr.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "first-year student", ch: "一年级学生", pos: "phr.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "first", ch: "第一", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "teacher", ch: "老师", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "teaching staff", ch: "教员", pos: "phr.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "professor", ch: "教员；教授", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "tuition", ch: "学费", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "admission", ch: "承认，准许进入", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "tutor", ch: "导师", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "personal tutor", ch: "个人导师", pos: "phr.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "tutorial", ch: "辅导课", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "university", ch: "大学", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "college", ch: "学院", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "department", ch: "院系", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "department head", ch: "系主任", pos: "phr.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "academic", ch: "学院的", pos: "adj.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "undergraduate", ch: "本科", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "semester", ch: "学期", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "term", ch: "学期", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "degree", ch: "学位", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "grade", ch: "等级", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "diploma", ch: "文凭", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "certificate", ch: "认证", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "qualification", ch: "合格", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "quality", ch: "质量", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "course", ch: "课程", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "course code", ch: "课程代码", pos: "phr.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "coursework", ch: "授课", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "programme", ch: "课程", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "subject", ch: "学科", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "discipline", ch: "纪律；学科", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "compulsory", ch: "必修的", pos: "adj.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "classroom", ch: "教室", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "classroom tour", ch: "教室参观", pos: "phr.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "lab", ch: "实验室", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "self-access lab", ch: "24小时实验室", pos: "phr.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "laboratory", ch: "实验室", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "laboratories report", ch: "实验室报告", pos: "phr.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "calendar", ch: "日历", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "timetable", ch: "时间表", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "time", ch: "时间", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "minute", ch: "分钟", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "hour", ch: "小时", pos: "n.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "daily", ch: "每日的；日常的", pos: "adj.", mainCategory: "Part 3", subCategory: "学校" },
+        { en: "daily routine", ch: "日常事务", pos: "phr.", mainCategory: "Part 3", subCategory: "学校" }
+    ];
+
+    const mainCategories = ["Part 3"];
+    const subCategoriesList = ["讲座科研论文","图书馆","学习与考试","学校"];
+
+    let currentMainCat = "Part 3";
+    let currentSubCat = "讲座科研论文";
+    let currentWords = vocabData.filter(w => w.mainCategory === currentMainCat && w.subCategory === currentSubCat);
+    if (currentWords.length === 0) currentWords = vocabData.filter(w => w.mainCategory === currentMainCat);
+    let currentIndex = 0;
+    let difficultSet = new Set();
+
+    const mainCategoryFlex = document.getElementById('mainCategoryFlex');
+    const subCategoryFlex = document.getElementById('subCategoryFlex');
+    const flipper = document.getElementById('flipper');
+    const mainEn = document.getElementById('mainEn'); 
+    const backEn = document.getElementById('backEn');
+    const posInfo = document.getElementById('posInfo');
+    const mainCh = document.getElementById('mainCh');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const speakBtn = document.getElementById('speakBtn');
+    const thumbGrid = document.getElementById('thumbGrid');
+    const exportBtn = document.getElementById('exportDifficultBtn');
+    const quizOpen = document.getElementById('quizOpenBtn');
+    const quizOverlay = document.getElementById('quizOverlay');
+    const closeQuiz = document.getElementById('closeQuizBtn');
+    const quizWord = document.getElementById('quizWord');
+    const quizPrev = document.getElementById('quizPrevBtn');
+    const quizNext = document.getElementById('quizNextBtn');
+    const quizCounter = document.getElementById('quizCounter');
+
+    flipper.addEventListener('click', () => flipper.classList.toggle('flipped'));
+
+    function renderMainCats() {
+        mainCategoryFlex.innerHTML = '';
+        mainCategories.forEach(cat => {
+            const btn = document.createElement('button');
+            btn.className = `chap-btn active`;
+            btn.innerText = cat;
+            mainCategoryFlex.appendChild(btn);
+        });
+    }
+
+    function renderSubCats() {
+        subCategoryFlex.innerHTML = '';
+        subCategoriesList.forEach(sub => {
+            const btn = document.createElement('button');
+            btn.className = `sub-btn ${sub === currentSubCat ? 'active-sub' : ''}`;
+            btn.innerText = sub;
+            btn.dataset.sub = sub;
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active-sub'));
+                btn.classList.add('active-sub');
+                currentSubCat = sub;
+                updateWordListAndDisplay();
+            });
+            const cnt = vocabData.filter(w => w.mainCategory === currentMainCat && w.subCategory === sub).length;
+            const span = document.createElement('span');
+            span.className = 'word-count-badge';
+            span.innerText = cnt;
+            btn.appendChild(span);
+            subCategoryFlex.appendChild(btn);
+        });
+    }
+
+    function updateWordListAndDisplay() {
+        let filtered = vocabData.filter(w => w.mainCategory === currentMainCat && w.subCategory === currentSubCat);
+        currentWords = filtered;
+        currentIndex = currentWords.length > 0 ? 0 : -1;
+        refreshMainCard();
+        renderThumbnails();
+    }
+
+    function refreshMainCard() {
+        if (currentWords.length === 0 || currentIndex < 0) {
+            mainEn.innerText = '无'; backEn.innerText = ''; posInfo.innerText = ''; mainCh.innerText = ''; return;
+        }
+        const w = currentWords[currentIndex];
+        mainEn.innerText = w.en;
+        backEn.innerText = w.en;
+        posInfo.innerText = w.pos || '';
+        mainCh.innerText = w.ch;
+        flipper.classList.remove('flipped');
+        speakWord(w.en);
+    }
+
+    function speakWord(text) {
+        if ('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(utterance);
+        }
+    }
+
+    function renderThumbnails() {
+        thumbGrid.innerHTML = '';
+        currentWords.forEach((w, idx) => {
+            const key = `${w.en}|${w.ch}`;
+            const card = document.createElement('div');
+            card.className = 'thumb-item';
+            card.innerHTML = `<input type="checkbox" class="diff-check" data-key="${key}" ${difficultSet.has(key) ? 'checked' : ''}><label>${w.en}</label>`;
+            card.addEventListener('click', (e) => {
+                if (e.target.tagName !== 'INPUT') { currentIndex = idx; refreshMainCard(); }
+            });
+            const chk = card.querySelector('.diff-check');
+            chk.addEventListener('change', (e) => {
+                e.stopPropagation();
+                const k = e.target.dataset.key;
+                e.target.checked ? difficultSet.add(k) : difficultSet.delete(k);
+            });
+            thumbGrid.appendChild(card);
+        });
+    }
+
+    function exportDifficult() {
+        const selected = vocabData.filter(v => difficultSet.has(`${v.en}|${v.ch}`));
+        if (!selected.length) { alert('没有勾选难词'); return; }
+        let csv = "英文,词性,中文含义\n";
+        selected.forEach(w => csv += `"${w.en}","${w.pos || ''}","${w.ch}"\n`);
+        const blob = new Blob(["\uFEFF"+csv], {type:"text/csv;charset=utf-8;"});
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "ielts_listening_difficult_words_part3.csv";
+        link.click();
+    }
+
+    let quizList = [], quizIdx = 0;
+    function openQuiz() {
+        if (!currentWords.length) return;
+        const shuffled = [...currentWords].sort(()=>Math.random()-0.5);
+        quizList = shuffled.slice(0, Math.min(20, currentWords.length));
+        quizIdx = 0; updateQuizDisplay(); quizOverlay.classList.add('show');
+    }
+    function updateQuizDisplay() { if(quizList.length){ quizWord.innerText = quizList[quizIdx].en; quizCounter.innerText = `${quizIdx+1}/${quizList.length}`; } }
+    function closeQuizFn() { quizOverlay.classList.remove('show'); }
+
+    prevBtn.addEventListener('click', ()=>{
+        if(!currentWords.length) return;
+        currentIndex = (currentIndex-1+currentWords.length)%currentWords.length; refreshMainCard();
+    });
+    nextBtn.addEventListener('click', ()=>{
+        if(!currentWords.length) return;
+        currentIndex = (currentIndex+1)%currentWords.length; refreshMainCard();
+    });
+    speakBtn.addEventListener('click', ()=>{
+        if(currentWords[currentIndex]) speakWord(currentWords[currentIndex].en);
+    });
+    exportBtn.addEventListener('click', exportDifficult);
+    quizOpen.addEventListener('click', openQuiz);
+    closeQuiz.addEventListener('click', closeQuizFn);
+    quizPrev.addEventListener('click', ()=>{ if(quizList.length){ quizIdx = (quizIdx-1+quizList.length)%quizList.length; updateQuizDisplay(); } });
+    quizNext.addEventListener('click', ()=>{ if(quizList.length){ quizIdx = (quizIdx+1)%quizList.length; updateQuizDisplay(); } });
+    quizOverlay.addEventListener('click', (e)=>{ if(e.target===quizOverlay) closeQuizFn(); });
+
+    renderMainCats(); renderSubCats();
+    setTimeout(()=>{ const f=document.querySelector('.sub-btn'); if(f) f.classList.add('active-sub'); },20);
+    updateWordListAndDisplay();
+})();
+</script>
+</body>
+</html>
